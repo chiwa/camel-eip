@@ -1,4 +1,4 @@
-package com.zengcode.eip.camel;
+package com.zengcode.eip;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.zengcode.eip.camel;
+package com.zengcode.eip;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
