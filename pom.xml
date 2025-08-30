@@ -1,45 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.5.5</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
+
 	<groupId>com.zengcode</groupId>
 	<artifactId>camel-eip</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>camel-eip</name>
 	<description>Demo project for Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
 	<properties>
 		<java.version>21</java.version>
 		<spring-boot.version>3.5.5</spring-boot.version>
 		<camel.version>4.10.0</camel.version>
-		<testcontainers.version>1.20.1</testcontainers.version>
+		<testcontainers.version>1.20.3</testcontainers.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- จัด version ของ Camel Spring Boot ให้ตรงกัน -->
 			<dependency>
 				<groupId>org.apache.camel.springboot</groupId>
 				<artifactId>camel-spring-boot-bom</artifactId>
 				<version>${camel.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>testcontainers-bom</artifactId>
+				<version>${testcontainers.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -59,13 +56,25 @@
 			<artifactId>camel-spring-boot-starter</artifactId>
 		</dependency>
 
-		<!-- ✅ นี่แหละตัวที่หาย: Kafka component ของ Camel -->
+		<!-- Kafka endpoint -->
 		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
 			<artifactId>camel-kafka-starter</artifactId>
 		</dependency>
 
-		<!-- JSON (ใช้ใน .unmarshal().json()) -->
+		<!-- ✅ Spring RabbitMQ endpoint (ใช้คอมโพเนนต์ spring-rabbitmq) -->
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-spring-rabbitmq-starter</artifactId>
+		</dependency>
+
+		<!-- แนะนำ: ตัว Spring AMQP เอง (ช่วยเรื่อง ConnectionFactory/Infra) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+
+		<!-- JSON -->
 		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
 			<artifactId>camel-jackson-starter</artifactId>
@@ -78,34 +87,45 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Spring Boot + Testcontainers integration (สำหรับ @Testcontainers / @DynamicPropertySource ทำงานลื่น) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-testcontainers</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Testcontainers JUnit 5 -->
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- ✅ Testcontainers Kafka (มี KafkaContainer) -->
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>kafka</artifactId>
-			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>rabbitmq</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- PostgreSQL JDBC -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- ให้ใช้ @CamelSpringBootTest กับ Spring Boot 3 + JUnit 5 -->
+		<!-- Awaitility (รอ connector / event แบบกัน timing flakiness) -->
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>4.2.2</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-spring-junit5</artifactId>
-			<version>4.10.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -117,7 +137,6 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${spring-boot.version}</version>
 			</plugin>
-			<!-- JUnit 5 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -125,5 +144,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
